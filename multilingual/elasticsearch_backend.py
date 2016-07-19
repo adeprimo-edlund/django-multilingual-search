@@ -34,6 +34,11 @@ class ElasticsearchMultilingualSearchBackend(ElasticsearchSearchBackend):
         self.content_field_name = ''
 
     def _index_name_for_language(self, language):
+        if not language in self.languages:
+            import re
+            language = re.sub(r'[-_].*$', '', language)
+            if not language in self.languages:
+                raise ImproperlyConfigured("Failed to figure out which language you are working with.")
         return '{0}-{1}'.format(self.index_base_name, language)
 
     def _reset_existing_mapping(self):
